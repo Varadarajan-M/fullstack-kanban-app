@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { isStrFalsy, throwError, sendError } = require('../helper');
 
-const isAuthenticated = async (req, res, next) => {
-	const { authorization } = req.headers;
-	const token = authorization.split(' ')[1];
+const verifyAuth = async (req, res, next) => {
+	const token = req.headers?.authorization?.split(' ')[1];
 	const authErr = throwError('Authentication Failed', 404);
 
 	if (isStrFalsy(token)) {
@@ -13,11 +12,11 @@ const isAuthenticated = async (req, res, next) => {
 			if (err) {
 				sendError(res, authErr);
 			} else {
-				req.user = user;
+				req.user = Object.freeze(user);
 				next();
 			}
 		});
 	}
 };
 
-module.exports = isAuthenticated;
+module.exports = verifyAuth;

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { TaskSchema } = require('./task.model');
 
 const BoardSchema = new mongoose.Schema(
 	{
@@ -14,6 +15,10 @@ const BoardSchema = new mongoose.Schema(
 		board_position: {
 			type: Number,
 			required: true,
+		},
+		tasks: {
+			type: [TaskSchema],
+			sparse: true,
 		},
 	},
 	{ timestamps: true },
