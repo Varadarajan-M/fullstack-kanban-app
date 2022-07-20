@@ -4,12 +4,15 @@ const taskroute = require('./routes/task.route');
 const boardroute = require('./routes/board.route');
 const sharedRoute = require('./routes/shared.route');
 const cors = require('cors');
+const helmet = require('helmet');
 const connectDb = require('./db/connection');
 const registerApp = async () => {
 	const app = express();
 	const registerRoute = (router) => app.use('/api', router);
 
 	app.use(cors());
+
+	app.use(helmet());
 	app.use(express.json());
 
 	registerRoute(userroute);

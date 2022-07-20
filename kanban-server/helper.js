@@ -43,4 +43,6 @@ module.exports = {
 	hashPassword,
 	isSame,
 	isStrFalsy,
+	isFalsy,
+	isEmpty,
 };

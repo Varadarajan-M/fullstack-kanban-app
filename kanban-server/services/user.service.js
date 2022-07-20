@@ -30,7 +30,7 @@ exports.register = async ({ email, password, username }) => {
 
 exports.login = async ({ email, password }) => {
 	try {
-		const user = await User.findOne({ email });
+		const user = await User.findOne({ email }).lean();
 		const userExistsAndPasswordMatches =
 			!isStrFalsy(user?.email) &&
 			isPasswordMatching(password, user?.password);

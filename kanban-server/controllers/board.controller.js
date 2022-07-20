@@ -24,16 +24,3 @@ exports.update = async (req, res) => {
 		sendError(res, CANNOT_UPDATE_BOARD_ERR);
 	}
 };
-
-exports.delete = async (req, res) => {
-	const deletedData = await BoardService.delete(
-		req.params?.id,
-		req?.user?.userID,
-	);
-	if (deletedData.ok) {
-		sendSuccessPayload(res, deletedData.message, 200);
-	} else {
-		const CANNOT_DELETE_BOARD_ERR = throwError('Cannot delete board', 400);
-		sendError(res, CANNOT_DELETE_BOARD_ERR);
-	}
-};

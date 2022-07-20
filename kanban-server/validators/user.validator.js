@@ -28,4 +28,4 @@ const registerValidator = [
 	usernameValidator,
 ];
 
-module.exports = { register: registerValidator };
+module.exports = { register: registerValidator, login: emailValidator };

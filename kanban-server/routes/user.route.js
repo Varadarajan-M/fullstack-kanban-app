@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.use('/user', router);
 
-router.route('/register').post(UserValidator.register , UserController.register);
+router.route('/register').post(UserValidator.register, UserController.register);
 
-router.route('/login').post(UserController.login);
+router.route('/login').post(UserValidator.login, UserController.login);
 
 module.exports = router;
