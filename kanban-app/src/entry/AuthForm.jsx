@@ -1,16 +1,43 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { isStrNotFalsy } from '../util';
 
-const AuthForm = ({ mode, onClick }) => {
+const AuthForm = ({ mode, onSubmit }) => {
+	const usernameRef = useRef(null);
+	const emailRef = useRef(null);
+	const passwordRef = useRef(null);
+	const isLogin = mode === 'login';
+
+	const submitHandler = (e) => {
+		e.preventDefault();
+		const loginCreds = {
+			email: emailRef?.current?.value,
+			password: passwordRef?.current?.value,
+		};
+
+		if (Object.values(loginCreds).every(isStrNotFalsy)) {
+			isLogin
+				? onSubmit(loginCreds)
+				: isStrNotFalsy(usernameRef?.current?.value) &&
+				  onSubmit({
+						username: usernameRef?.current?.value,
+						...loginCreds,
+				  });
+			return;
+		}
+		alert('All fields are required!');
+	};
+
 	return (
-		<form className='form'>
+		<form onSubmit={submitHandler} className='form'>
 			{mode === 'signup' ? (
 				<div className='username'>
 					<label htmlFor='username'>Username</label>
 					<input
 						id='username'
+						ref={usernameRef}
 						placeholder='John Doe'
 						type='text'
-						required
+						// required
 					/>
 				</div>
 			) : (
@@ -21,6 +48,7 @@ const AuthForm = ({ mode, onClick }) => {
 				<input
 					id='email'
 					type='email'
+					ref={emailRef}
 					placeholder='Johndoe@example.com'
 					required
 				/>
@@ -29,12 +57,14 @@ const AuthForm = ({ mode, onClick }) => {
 				<label htmlFor='password'>Password</label>
 				<input
 					id='password'
-					placeholder='Password'
 					type='password'
+					ref={passwordRef}
+					placeholder='Password'
 					required
+					autoComplete='off'
 				/>
 			</div>
-			<button onClick={onClick}>
+			<button type='submit'>
 				{mode === 'login' ? 'Sign in' : 'Sign up'}
 			</button>
 		</form>

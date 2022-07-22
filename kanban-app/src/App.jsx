@@ -1,6 +1,5 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Login from './entry/Login';
 import Auth from './pages/Auth';
 
 function App() {
