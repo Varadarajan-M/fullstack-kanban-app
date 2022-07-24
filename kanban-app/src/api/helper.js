@@ -7,11 +7,15 @@ export const getUser = () => localStorage.getItem('authToken') ?? null;
 
 export const getEmail = () => localStorage.getItem('authEmail') ?? null;
 
+export const getUserName = () => localStorage.getItem('authUser') ?? null;
+
 export const doesUserExist = () => isStrNotFalsy(getUser());
 
-export const setUser = (v) => localStorage.setItem('authToken', v);
+export const setToken = (v) => localStorage.setItem('authToken', v);
 
 export const setEmail = (v) => localStorage.setItem('authEmail', v);
+
+export const setUserName = (v) => localStorage.setItem('authUser', v);
 
 // *http
 
@@ -55,10 +59,12 @@ export const login = async (userCreds, setAuthState) => {
 			isAuthenticated: true,
 			user: {
 				email: res?.payload?.email,
+				username: res?.payload?.username,
 			},
 		});
 		setEmail(res?.payload?.email);
-		setUser(res?.payload?.token);
+		setToken(res?.payload?.token);
+		setUserName(res?.payload?.username);
 	}
 	return res;
 };

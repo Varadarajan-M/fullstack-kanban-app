@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { doesUserExist, getEmail } from './../api/helper';
+import { doesUserExist, getEmail, getUserName } from './../api/helper';
 
 const initAuthState = {
 	isAuthenticated: false,
@@ -12,6 +12,7 @@ const getInitialAuthState = () => ({
 	isAuthenticated: doesUserExist(),
 	user: {
 		email: getEmail(),
+		username: getUserName(),
 	},
 });
 
@@ -20,8 +21,12 @@ const AuthContext = createContext(initAuthState);
 const AuthContextProvider = ({ children }) => {
 	const [authState, setAuthState] = useState(getInitialAuthState);
 
+	const clearAuthState = () => setAuthState(initAuthState);
+
 	return (
-		<AuthContext.Provider value={{ authState, setAuthState }}>
+		<AuthContext.Provider
+			value={{ authState, setAuthState, clearAuthState }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

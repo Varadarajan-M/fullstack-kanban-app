@@ -43,7 +43,11 @@ exports.login = async ({ email, password }) => {
 			);
 			return {
 				ok: true,
-				user: { email: user.email, token: token },
+				user: {
+					email: user.email,
+					token: token,
+					username: user.username,
+				},
 			};
 		}
 		return ERROR_RESPONSE;

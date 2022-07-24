@@ -1,0 +1,48 @@
+:focus-visible {
+	outline: none !important;
+}
+
+.add-task-form {
+	transition: 0.3s;
+	textarea {
+		width: min(100%, 100%);
+		background: #0d1117;
+		color: rgba(255, 255, 255, 0.95);
+		border-radius: 5px;
+		border: 1.5px solid #30363d;
+		padding: 0.5rem;
+
+		&:focus-visible {
+			border: 2px solid #58a6ff;
+			box-shadow: 3px 4px 4px 3px rgb(32 19 113 / 34%);
+		}
+	}
+
+	button {
+		width: 47%;
+		outline: none;
+		border: none;
+		height: 35px;
+		border-radius: 5px;
+		margin: 15px 0;
+		font-weight: 600;
+		font-size: 1rem;
+		color: #b1eeff;
+		cursor: pointer;
+
+		&:nth-of-type(1) {
+			margin-right: 6%;
+			background-color: #238636;
+			&:hover {
+				background: #2ea043;
+			}
+		}
+		&:nth-of-type(2) {
+			background: #21262d;
+
+			&:hover {
+				background: #30363d;
+			}
+		}
+	}
+}
