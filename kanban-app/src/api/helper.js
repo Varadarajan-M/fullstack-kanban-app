@@ -1,4 +1,4 @@
-import { LOGIN_URL, SIGN_UP_URL } from './constants';
+import { BOARD_INFO_URL, LOGIN_URL, SIGN_UP_URL } from './constants';
 import { isStrNotFalsy } from '../util';
 
 // *Local Storage
@@ -73,6 +73,17 @@ export const signup = async (userCreds) => {
 	const res = await makeHttpReq(
 		SIGN_UP_URL,
 		makeHttpOptions('POST', userCreds),
+	);
+	return res;
+};
+
+
+// Get user board information
+
+export const getBoardInfo = async (accessToken) => {
+	const res = await makeHttpReq(
+		BOARD_INFO_URL,
+		makeHttpOptions('GET', {}, accessToken),
 	);
 	return res;
 };

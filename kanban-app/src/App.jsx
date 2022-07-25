@@ -1,5 +1,5 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
-import './App.css';
+import './App.scss';
 import ProtectedRoutes from './common/ProtectedRoute';
 import Auth from './pages/Auth';
 import UserData from './user-boards/UserData';

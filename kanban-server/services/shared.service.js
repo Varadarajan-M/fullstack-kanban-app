@@ -1,4 +1,4 @@
-const { isFalsy } = require('../helper');
+const { isFalsy, sortBy } = require('../helper');
 const Board = require('../models/board.model');
 const { Task } = require('../models/task.model');
 const ERROR_RESPONSE = {
@@ -9,21 +9,32 @@ exports.getBoardData = async function (id) {
 	let boardData = {};
 	try {
 		const [boards, tasks] = await Promise.all([
-			Board.find({ user_id: id }).lean(),
+			Board.find({ user_id: id }).lean().sort({ board_position: 'asc' }),
 			Task.find({ user_id: id }).lean(),
 		]);
 
 		if (boards?.length > 0) {
 			boards.forEach((board) => {
-				boardData[[board.board_name]] = {
-					...board,
-					tasks: tasks?.filter(
+				const boardTasks = sortBy(
+					tasks?.filter(
 						(task) =>
 							task.board_id.toString() === board._id.toString(),
 					),
+					'task_position',
+				);
+
+				boardData[
+					[
+						board.board_position ??
+							Math.floor(Math.random() * 99999).toString(),
+					]
+				] = {
+					...board,
+					tasks: boardTasks,
 				};
 			});
 		}
+
 		return { ok: true, boardData };
 	} catch (e) {
 		return ERROR_RESPONSE;

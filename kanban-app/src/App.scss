@@ -34,11 +34,11 @@ html {
 	font-size: 20px;
 	color: rgba(255, 255, 255, 0.35);
 	margin-inline: 3px;
-  cursor: pointer;
-  transition:0.3s;
+	cursor: pointer;
+	transition: 0.3s;
 }
 
 .custom-icon:hover {
 	color: rgba(255, 255, 255, 0.95);
-  transform:scale(1.05)
+	transform: scale(1.05);
 }

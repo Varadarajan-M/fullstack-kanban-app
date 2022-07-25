@@ -35,6 +35,11 @@ const isFalsy = (val) => val == undefined || val == null;
 
 const isStrFalsy = (val) => isEmpty(val) || isFalsy(val);
 
+const sortBy = (arr, field) => {
+	arr.sort((a, b) => (a[[field]] ?? 0) - (b[[field]] ?? 0));
+	return arr;
+};
+
 module.exports = {
 	sendSuccessPayload,
 	sendError,
@@ -45,4 +50,5 @@ module.exports = {
 	isStrFalsy,
 	isFalsy,
 	isEmpty,
+	sortBy,
 };

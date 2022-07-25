@@ -4,7 +4,7 @@ const SharedService = require('../services/shared.service');
 exports.getBoardData = async function (req, res, next) {
 	const boardData = await SharedService.getBoardData(req?.user?.userID);
 	if (boardData.ok) {
-		sendSuccessPayload(res, boardData, 200);
+		sendSuccessPayload(res, boardData?.boardData, 200);
 	} else {
 		sendError(res, throwError('Something went wrong', 400));
 	}

@@ -3,6 +3,7 @@
 	display: flex;
 	gap: 15px;
 	overflow-x: scroll;
+
 	.board {
 		padding: 1rem 0.5rem;
 		min-height: 500px;
@@ -44,5 +45,15 @@
 		.board__tasks {
 			margin: 10px 0;
 		}
+	}
+	.board.add__new {
+		background-color: transparent;
+		border: 3.5px dotted #30363d;
+		border-radius: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: bold;
+		min-width: 250px !important;
 	}
 }
