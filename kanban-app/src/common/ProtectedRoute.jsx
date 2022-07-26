@@ -5,11 +5,9 @@ import { useAuth } from './../context/AuthContext';
 const AuthError = () => <p>Authentication Error</p>;
 
 const ProtectedRoutes = () => {
-	const {
-		authState: { isAuthenticated },
-	} = useAuth();
+	const { authState } = useAuth();
 
-	return isAuthenticated ? <Outlet /> : <AuthError />;
+	return authState?.isAuthenticated ? <Outlet /> : <AuthError />;
 };
 
 export default ProtectedRoutes;

@@ -1,13 +1,14 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Boards from './Boards';
+import { BoardDataContextProvider } from '../context/BoardDataContext';
 
 const UserData = () => {
 	return (
-		<React.Fragment>
+		<BoardDataContextProvider>
 			<Navbar />
 			<Boards />
-		</React.Fragment>
+		</BoardDataContextProvider>
 	);
 };
 export default UserData;

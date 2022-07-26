@@ -1,53 +1,84 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import Icon from '../common/Icon';
-import AddTaskForm from './AddTaskForm';
+import BasicAddForm from './AddTaskForm';
 import './Boards.scss';
 import TaskCard from './TaskCard';
-import { getBoardInfo, getUser, isResOk } from './../api/helper';
-import { removeKey } from './helper';
-import { useNavigate } from 'react-router-dom';
+import { useBoardData } from '../context/BoardDataContext';
+import { toggleElementFromSet } from './helper';
 
 const Boards = () => {
 	const [activeBoardIndexes, setActiveBoardIndexes] = useState(new Set([]));
-	const [boardDataLoading, setBoardDataLoading] = useState(false);
-	const [addBoardModalOpen, setAddBoardModalOpen] = useState(false);
+	const [editingBoardIndexes, setEditingBoardIndexes] = useState(new Set([]));
 	const [deletedStack, setDeletedStack] = useState({ boards: [], tasks: [] });
-	const navigate = useNavigate();
-	const [boardData, setBoardData] = useState({});
+	const [isAddingBoard, setIsAddingBoard] = useState(false);
+	const [boardNamesEditTracker, setBoardNamesEditTracker] = useState({});
+	const [inputs, setInputs] = useState({});
 
-	useEffect(() => {
-		async function getBoardInformation() {
-			setBoardDataLoading(true);
-			const res = await getBoardInfo(getUser());
-			if (isResOk(res)) {
-				setBoardData(res.payload);
-				setBoardDataLoading(false);
-			} else {
-				navigate('/login', { replace: true });
-			}
-		}
-		getBoardInformation();
-	}, []);
+	const {
+		boardDataLoading,
+		boardData,
+		getBoardInformation,
+		deleteBoardInfo,
+		editBoardName,
+		addNewBoard,
+	} = useBoardData();
 
-	const onAddIconClick = (index) => {
-		setActiveBoardIndexes((boardIndexes) => {
-			const modifiedSet = new Set(boardIndexes);
-			boardIndexes.has(index)
-				? modifiedSet.delete(index)
-				: modifiedSet.add(index);
-			return modifiedSet;
-		});
+	const onAddIconClick = (index) =>
+		toggleElementFromSet(activeBoardIndexes, index, setActiveBoardIndexes);
+
+	const onEditIconClick = (index) => {
+		toggleElementFromSet(
+			editingBoardIndexes,
+			index,
+			setEditingBoardIndexes,
+		);
+		setBoardNamesEditTracker((tracker) => ({
+			...tracker,
+			[index + 1]: '',
+		}));
 	};
-
 	const onBoardDelete = (boardId, boardPosition) => {
 		setDeletedStack((stack) => ({
 			...stack,
 			boards: [...stack.boards, { _id: boardId }],
 		}));
-		setBoardData((b) => removeKey(b, boardPosition));
+		deleteBoardInfo(boardPosition);
 	};
 
-	useEffect(() => console.log(deletedStack), [deletedStack]);
+	const boardNamesChangeHandler = (e, boardPosition) => {
+		setBoardNamesEditTracker((tracker) => ({
+			...tracker,
+			[boardPosition]: e.target.value,
+		}));
+	};
+
+	const boardNamesEditHandler = (boardPosition) => {
+		onEditIconClick(+boardPosition - 1);
+		editBoardName(boardPosition, boardNamesEditTracker[[boardPosition]]);
+	};
+
+	const toggleBoardAdd = () => setIsAddingBoard(!isAddingBoard);
+
+	useEffect(() => {
+		getBoardInformation();
+	}, []);
+
+	const addBoardChangeHandler = (e) => {
+		setInputs((ip) => ({
+			...ip,
+			newBoard: e.target.value,
+		}));
+	};
+
+	const addBoardSubmitHandler = () => {
+		if (deletedStack?.boards?.length > 0) {
+			alert('Please save changes before adding new board');
+			return;
+		}
+		addNewBoard(inputs.newBoard);
+		addBoardChangeHandler({ target: { value: '' } });
+	};
+
 	return (
 		<div className='boards-wrapper'>
 			{!boardDataLoading ? (
@@ -64,9 +95,33 @@ const Boards = () => {
 									<div className='board__header'>
 										<div className='board__left'>
 											<div className='board__items-length'>
-												{column.tasks.length}
+												{column?.tasks?.length}
 											</div>{' '}
-											<span>{column.board_name}</span>
+											{editingBoardIndexes.has(index) ? (
+												<div className='board__edit'>
+													<input
+														onChange={(e) =>
+															boardNamesChangeHandler(
+																e,
+																boardPos,
+															)
+														}
+														defaultValue={
+															column?.board_name
+														}
+													/>
+													<Icon
+														type={'Done'}
+														onClick={() =>
+															boardNamesEditHandler(
+																boardPos,
+															)
+														}
+													/>
+												</div>
+											) : (
+												<span>{column.board_name}</span>
+											)}
 										</div>
 										<div className='board__right'>
 											<Icon
@@ -85,7 +140,16 @@ const Boards = () => {
 												}
 											/>
 											<Icon
-												type='edit'
+												onClick={() =>
+													onEditIconClick(index)
+												}
+												type={
+													editingBoardIndexes.has(
+														index,
+													)
+														? 'close'
+														: 'edit'
+												}
 												tooltip={'Edit board name'}
 											/>
 											<Icon
@@ -102,7 +166,8 @@ const Boards = () => {
 									</div>
 									<div className='board__tasks'>
 										{activeBoardIndexes.has(index) ? (
-											<AddTaskForm
+											<BasicAddForm
+												placeholder={'Enter task item'}
 												onCancelClick={() =>
 													onAddIconClick(index)
 												}
@@ -124,7 +189,22 @@ const Boards = () => {
 					)}
 
 					<div className='board add__new'>
-						<span role='button'>Add New Board</span>
+						<div className='title' onClick={toggleBoardAdd}>
+							{' '}
+							<Icon type={isAddingBoard ? 'Remove' : 'Add'} />
+							<span role='button'> Add New Board</span>{' '}
+						</div>
+						{isAddingBoard ? (
+							<BasicAddForm
+								value={inputs?.newBoard ?? ''}
+								changeHandler={addBoardChangeHandler}
+								onAddClick={addBoardSubmitHandler}
+								placeholder={'Enter new board name'}
+								onCancelClick={toggleBoardAdd}
+							/>
+						) : (
+							''
+						)}
 					</div>
 				</Fragment>
 			) : (

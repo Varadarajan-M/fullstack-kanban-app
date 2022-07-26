@@ -1,4 +1,10 @@
-import { BOARD_INFO_URL, LOGIN_URL, SIGN_UP_URL } from './constants';
+import {
+	ADD_BOARD_URL,
+	BOARD_INFO_URL,
+	LOGIN_URL,
+	SIGN_UP_URL,
+	UPDATE_BOARD_URL,
+} from './constants';
 import { isStrNotFalsy } from '../util';
 
 // *Local Storage
@@ -77,7 +83,6 @@ export const signup = async (userCreds) => {
 	return res;
 };
 
-
 // Get user board information
 
 export const getBoardInfo = async (accessToken) => {
@@ -85,5 +90,30 @@ export const getBoardInfo = async (accessToken) => {
 		BOARD_INFO_URL,
 		makeHttpOptions('GET', {}, accessToken),
 	);
+	return res;
+};
+
+// Update Board Name
+
+export const updateBoard = async (id, value, accessToken) => {
+	const res = await makeHttpReq(
+		`${UPDATE_BOARD_URL}/${id}`,
+		makeHttpOptions(
+			'PATCH',
+			{
+				board_name: value,
+			},
+			accessToken,
+		),
+	);
+	return res;
+};
+
+export const addBoard = async (boardDetails, accessToken) => {
+	const res = await makeHttpReq(
+		ADD_BOARD_URL,
+		makeHttpOptions('POST', boardDetails, accessToken),
+	);
+	console.log(res);
 	return res;
 };

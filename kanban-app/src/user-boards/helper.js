@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 export const removeKey = (obj, key) => {
 	const clone = structuredClone(obj);
 	delete clone[[key]];
@@ -17,4 +19,21 @@ export const setValue = (obj, path, value) => {
 	let res = getVal(obj, patharray, value);
 	res[patharray.at(-1)] = value;
 	return newObj;
+};
+
+export const toggleElementFromSet = (set, el, setterFn) => {
+	const modifiedSet = new Set(set);
+	modifiedSet.has(el) ? modifiedSet.delete(el) : modifiedSet.add(el);
+	setterFn(modifiedSet);
+};
+
+export const useInstantUpdate = (setterFn) => {
+	const [loading, setLoading] = useState(true);
+
+	const performInstantUpdate = (updatedData) => {
+		setterFn(updatedData);
+		setTimeout(() => setLoading(!loading), 100);
+	};
+
+	return { performInstantUpdate };
 };
