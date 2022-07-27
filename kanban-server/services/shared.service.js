@@ -5,7 +5,7 @@ const ERROR_RESPONSE = {
 	ok: false,
 };
 
-exports.getBoardData = async function (id) {
+const getBoardData = async function (id) {
 	let boardData = {};
 	try {
 		const [boards, tasks] = await Promise.all([
@@ -23,12 +23,7 @@ exports.getBoardData = async function (id) {
 					'task_position',
 				);
 
-				boardData[
-					[
-						board.board_position ??
-							Math.floor(Math.random() * 99999).toString(),
-					]
-				] = {
+				boardData[board.board_position] = {
 					...board,
 					tasks: boardTasks,
 				};
@@ -44,7 +39,7 @@ exports.getBoardData = async function (id) {
 const isBoardOwner = async (userId, boardId) =>
 	!isFalsy(await Board.exists({ _id: boardId, user_id: userId }));
 
-exports.bulkUpdateTasks = async (updatedTasks, deletedStack, userID) => {
+const bulkUpdateTasks = async (updatedTasks, deletedStack, userID) => {
 	try {
 		await Promise.all(
 			updatedTasks?.map(async (task) => {
@@ -83,3 +78,5 @@ exports.bulkUpdateTasks = async (updatedTasks, deletedStack, userID) => {
 		return ERROR_RESPONSE;
 	}
 };
+
+module.exports = { isBoardOwner, getBoardData, bulkUpdateTasks };

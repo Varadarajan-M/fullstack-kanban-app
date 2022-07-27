@@ -9,7 +9,6 @@ import { toggleElementFromSet } from './helper';
 const Boards = () => {
 	const [activeBoardIndexes, setActiveBoardIndexes] = useState(new Set([]));
 	const [editingBoardIndexes, setEditingBoardIndexes] = useState(new Set([]));
-	const [deletedStack, setDeletedStack] = useState({ boards: [], tasks: [] });
 	const [isAddingBoard, setIsAddingBoard] = useState(false);
 	const [boardNamesEditTracker, setBoardNamesEditTracker] = useState({});
 	const [inputs, setInputs] = useState({});
@@ -21,12 +20,14 @@ const Boards = () => {
 		deleteBoardInfo,
 		editBoardName,
 		addNewBoard,
+		deletedStack,
+		setDeletedStack,
 	} = useBoardData();
 
 	const onAddIconClick = (index) =>
 		toggleElementFromSet(activeBoardIndexes, index, setActiveBoardIndexes);
 
-	const onEditIconClick = (index) => {
+	const onEditIconClick = (index, boardPos) => {
 		toggleElementFromSet(
 			editingBoardIndexes,
 			index,
@@ -34,7 +35,7 @@ const Boards = () => {
 		);
 		setBoardNamesEditTracker((tracker) => ({
 			...tracker,
-			[index + 1]: '',
+			[boardPos]: '',
 		}));
 	};
 	const onBoardDelete = (boardId, boardPosition) => {
@@ -52,8 +53,8 @@ const Boards = () => {
 		}));
 	};
 
-	const boardNamesEditHandler = (boardPosition) => {
-		onEditIconClick(+boardPosition - 1);
+	const boardNamesEditHandler = (boardPosition, index) => {
+		onEditIconClick(index, boardPosition);
 		editBoardName(boardPosition, boardNamesEditTracker[[boardPosition]]);
 	};
 
@@ -71,10 +72,6 @@ const Boards = () => {
 	};
 
 	const addBoardSubmitHandler = () => {
-		if (deletedStack?.boards?.length > 0) {
-			alert('Please save changes before adding new board');
-			return;
-		}
 		addNewBoard(inputs.newBoard);
 		addBoardChangeHandler({ target: { value: '' } });
 	};
@@ -115,6 +112,7 @@ const Boards = () => {
 														onClick={() =>
 															boardNamesEditHandler(
 																boardPos,
+																index,
 															)
 														}
 													/>
@@ -141,7 +139,10 @@ const Boards = () => {
 											/>
 											<Icon
 												onClick={() =>
-													onEditIconClick(index)
+													onEditIconClick(
+														index,
+														boardPos,
+													)
 												}
 												type={
 													editingBoardIndexes.has(

@@ -2,6 +2,7 @@ import {
 	ADD_BOARD_URL,
 	BOARD_INFO_URL,
 	LOGIN_URL,
+	SAVE_CHANGES_URL,
 	SIGN_UP_URL,
 	UPDATE_BOARD_URL,
 } from './constants';
@@ -114,6 +115,13 @@ export const addBoard = async (boardDetails, accessToken) => {
 		ADD_BOARD_URL,
 		makeHttpOptions('POST', boardDetails, accessToken),
 	);
-	console.log(res);
+	return res;
+};
+
+export const saveAllChanges = async (payload, accessToken) => {
+	const res = await makeHttpReq(
+		SAVE_CHANGES_URL,
+		makeHttpOptions('PUT', payload, accessToken),
+	);
 	return res;
 };

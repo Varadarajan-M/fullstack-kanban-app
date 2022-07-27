@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBoardData } from '../context/BoardDataContext';
 import { useAuth } from './../context/AuthContext';
 import './Navbar.scss';
 
@@ -10,7 +11,11 @@ const Navbar = () => {
 		},
 		clearAuthState,
 	} = useAuth();
+	const { saveState, saveChanges } = useBoardData();
 	const navigate = useNavigate();
+
+	const isSaveDisabled = saveState === 'disabled';
+	const isSaving = saveState === 'saving';
 	return (
 		<nav className='navbar'>
 			<div className='nav__brand'>
@@ -19,7 +24,12 @@ const Navbar = () => {
 
 			<div className='nav__buttons'>
 				<div className='nav__save_btn'>
-					<button>Save</button>
+					<button
+						disabled={isSaveDisabled || isSaving}
+						onClick={saveChanges}
+					>
+						{isSaving ? 'Saving' : 'Save'}
+					</button>
 				</div>
 				<button
 					onClick={() => {

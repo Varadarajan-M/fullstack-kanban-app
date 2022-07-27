@@ -6,6 +6,7 @@ import {
 	updateBoard,
 	getUser,
 	addBoard,
+	saveAllChanges,
 } from '../api/helper';
 import { isStrFalsy } from '../util';
 import { removeKey, setValue, useInstantUpdate } from './../user-boards/helper';
@@ -15,6 +16,8 @@ const BoardDataContext = createContext({});
 export const BoardDataContextProvider = ({ children }) => {
 	const [boardData, setBoardData] = useState({});
 	const [boardDataLoading, setBoardDataLoading] = useState(false);
+	const [saveState, setSaveState] = useState('disabled');
+	const [deletedStack, setDeletedStack] = useState({ boards: [], tasks: [] });
 	const navigate = useNavigate();
 	const { performInstantUpdate } = useInstantUpdate(setBoardData);
 
@@ -31,6 +34,7 @@ export const BoardDataContextProvider = ({ children }) => {
 
 	const deleteBoardInfo = useCallback((boardPosition) => {
 		setBoardData((b) => removeKey(b, boardPosition));
+		setSaveState('enabled');
 	}, []);
 
 	const editBoardName = async (key, value) => {
@@ -47,7 +51,6 @@ export const BoardDataContextProvider = ({ children }) => {
 		if (isStrFalsy(value)) return;
 		const board = {
 			board_name: value,
-			board_position: Object.keys(boardData).length + 1,
 		};
 		const res = await addBoard(board, getUser());
 		if (isResOk(res)) {
@@ -63,6 +66,22 @@ export const BoardDataContextProvider = ({ children }) => {
 		}
 	};
 
+	const saveChanges = async () => {
+		const payload = { tasks: [], deletedStack };
+		setSaveState('saving');
+		Object.entries(boardData).forEach(([key, board]) => {
+			const tasks = board.tasks.reduce(
+				(ac, task, index) => [...ac, { ...task, task_position: index }],
+				[],
+			);
+			payload.tasks.push(tasks);
+		});
+		payload.tasks = payload.tasks.flat();
+
+		const res = await saveAllChanges(payload, getUser());
+		if (isResOk(res)) setSaveState('disabled');
+	};
+
 	return (
 		<BoardDataContext.Provider
 			value={{
@@ -72,6 +91,11 @@ export const BoardDataContextProvider = ({ children }) => {
 				deleteBoardInfo,
 				editBoardName,
 				addNewBoard,
+				saveState,
+				setSaveState,
+				deletedStack,
+				setDeletedStack,
+				saveChanges,
 			}}
 		>
 			{children}
