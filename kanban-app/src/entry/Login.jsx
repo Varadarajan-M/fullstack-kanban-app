@@ -11,7 +11,9 @@ const Login = () => {
 	const { setAuthState } = useAuth();
 	const onLogin = async (userCreds) => {
 		const res = await login(userCreds, setAuthState);
-		isResOk(res) ? navigate('/home') : alert(res?.error?.message);
+		isResOk(res)
+			? navigate('/home')
+			: alert(res?.error?.message ?? 'Something went wrong');
 	};
 
 	return (

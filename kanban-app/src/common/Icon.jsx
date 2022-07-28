@@ -1,12 +1,15 @@
 import React from 'react';
 
-const Icon = ({ type, tooltip, onClick }) => {
+const Icon = ({ type, tooltip, onClick, className }) => {
+	const classes = `${
+		className ?? 'icn'
+	} material-symbols-outlined custom-icon`;
 	return (
 		<span
 			onClick={onClick}
 			title={tooltip}
 			role='button'
-			className='material-symbols-outlined custom-icon'
+			className={classes}
 		>
 			{type}
 		</span>

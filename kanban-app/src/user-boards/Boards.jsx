@@ -9,8 +9,10 @@ import { toggleElementFromSet } from './helper';
 const Boards = () => {
 	const [activeBoardIndexes, setActiveBoardIndexes] = useState(new Set([]));
 	const [editingBoardIndexes, setEditingBoardIndexes] = useState(new Set([]));
+	const [editingTaskIndexes, setEditingTaskIndexes] = useState(new Set([]));
 	const [isAddingBoard, setIsAddingBoard] = useState(false);
 	const [boardNamesEditTracker, setBoardNamesEditTracker] = useState({});
+	const [taskEditTracker, setTaskEditTracker] = useState({});
 	const [inputs, setInputs] = useState({});
 
 	const {
@@ -23,6 +25,7 @@ const Boards = () => {
 		setDeletedStack,
 		addNewTask,
 		deleteTask: deleteTaskContext,
+		editTask,
 	} = useBoardData();
 
 	const onAddIconClick = (index) =>
@@ -43,6 +46,12 @@ const Boards = () => {
 		setDeletedStack((stack) => ({
 			...stack,
 			boards: [...stack.boards, { _id: boardId }],
+			tasks: [
+				...stack.tasks,
+				...boardData[boardPosition]?.tasks?.map((t) => ({
+					_id: t._id,
+				})),
+			],
 		}));
 		deleteBoardInfo(boardPosition);
 	};
@@ -89,6 +98,22 @@ const Boards = () => {
 			tasks: [...stack.tasks, { _id: task._id }],
 		}));
 		deleteTaskContext(task, boardPosition);
+	};
+
+	const onTaskEditIconClick = (taskId) =>
+		toggleElementFromSet(editingTaskIndexes, taskId, setEditingTaskIndexes);
+
+	const taskEditChangeHandler = (e, task_id) => {
+		setTaskEditTracker((tracker) => ({
+			...tracker,
+			[task_id]: e.target.value,
+		}));
+	};
+
+	const taskEditSubmitHandler = (boardPos, task_id) => {
+		editTask(boardPos, task_id, taskEditTracker[task_id]);
+		onTaskEditIconClick(task_id);
+		taskEditChangeHandler({ target: { value: '' } }, task_id);
 	};
 
 	useEffect(() => {
@@ -213,8 +238,28 @@ const Boards = () => {
 											<TaskCard
 												key={task._id}
 												taskItem={task.task_item}
-												onDelete={() =>
+												isEditing={editingTaskIndexes.has(
+													task._id,
+												)}
+												onEditIconClick={() =>
+													onTaskEditIconClick(
+														task._id,
+													)
+												}
+												onEditSubmit={() =>
+													taskEditSubmitHandler(
+														boardPos,
+														task._id,
+													)
+												}
+												onDeleteIconClick={() =>
 													deleteTask(task, boardPos)
+												}
+												changeHandler={(e) =>
+													taskEditChangeHandler(
+														e,
+														task._id,
+													)
 												}
 											/>
 										))}

@@ -120,6 +120,21 @@ export const BoardDataContextProvider = ({ children }) => {
 		setSaveState('enabled');
 	};
 
+	const editTask = (boardPosition, taskId, value) => {
+		if (isStrFalsy(value)) return;
+
+		setBoardData((board) => ({
+			...board,
+			[boardPosition]: {
+				...board[boardPosition],
+				tasks: board[boardPosition].tasks.map((t) =>
+					t._id === taskId ? { ...t, task_item: value } : t,
+				),
+			},
+		}));
+		setSaveState('enabled');
+	};
+
 	useEffect(() => {
 		const beforeUnloadListener = (event) => {
 			event.preventDefault();
@@ -130,6 +145,11 @@ export const BoardDataContextProvider = ({ children }) => {
 				capture: true,
 			});
 		}
+
+		if (saveState === 'disabled') {
+			setDeletedStack({ boards: [], tasks: [] });
+		}
+
 		return () =>
 			window.removeEventListener('beforeunload', beforeUnloadListener, {
 				capture: true,
@@ -152,6 +172,7 @@ export const BoardDataContextProvider = ({ children }) => {
 				saveChanges,
 				addNewTask,
 				deleteTask,
+				editTask,
 			}}
 		>
 			{children}
