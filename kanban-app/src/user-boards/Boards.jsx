@@ -20,8 +20,9 @@ const Boards = () => {
 		deleteBoardInfo,
 		editBoardName,
 		addNewBoard,
-		deletedStack,
 		setDeletedStack,
+		addNewTask,
+		deleteTask: deleteTaskContext,
 	} = useBoardData();
 
 	const onAddIconClick = (index) =>
@@ -60,10 +61,6 @@ const Boards = () => {
 
 	const toggleBoardAdd = () => setIsAddingBoard(!isAddingBoard);
 
-	useEffect(() => {
-		getBoardInformation();
-	}, []);
-
 	const addBoardChangeHandler = (e) => {
 		setInputs((ip) => ({
 			...ip,
@@ -75,6 +72,28 @@ const Boards = () => {
 		addNewBoard(inputs.newBoard);
 		addBoardChangeHandler({ target: { value: '' } });
 	};
+
+	const addNewTaskChangeHandler = (e, boardPosition) => {
+		setInputs((ip) => ({ ...ip, [boardPosition]: e.target.value }));
+	};
+
+	const addNewTaskSubmitHandler = (boardPosition, boardIndex) => {
+		addNewTask(inputs[boardPosition] ?? '', boardPosition);
+		addNewTaskChangeHandler({ target: { value: '' } }, boardPosition);
+		onAddIconClick(boardIndex);
+	};
+
+	const deleteTask = (task, boardPosition) => {
+		setDeletedStack((stack) => ({
+			...stack,
+			tasks: [...stack.tasks, { _id: task._id }],
+		}));
+		deleteTaskContext(task, boardPosition);
+	};
+
+	useEffect(() => {
+		getBoardInformation();
+	}, []);
 
 	return (
 		<div className='boards-wrapper'>
@@ -168,7 +187,20 @@ const Boards = () => {
 									<div className='board__tasks'>
 										{activeBoardIndexes.has(index) ? (
 											<BasicAddForm
+												value={inputs[boardPos] ?? ''}
+												changeHandler={(e) =>
+													addNewTaskChangeHandler(
+														e,
+														boardPos,
+													)
+												}
 												placeholder={'Enter task item'}
+												onAddClick={() =>
+													addNewTaskSubmitHandler(
+														boardPos,
+														index,
+													)
+												}
 												onCancelClick={() =>
 													onAddIconClick(index)
 												}
@@ -181,6 +213,9 @@ const Boards = () => {
 											<TaskCard
 												key={task._id}
 												taskItem={task.task_item}
+												onDelete={() =>
+													deleteTask(task, boardPos)
+												}
 											/>
 										))}
 									</div>

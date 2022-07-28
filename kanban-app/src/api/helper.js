@@ -1,5 +1,6 @@
 import {
 	ADD_BOARD_URL,
+	ADD_NEW_TASK_URL,
 	BOARD_INFO_URL,
 	LOGIN_URL,
 	SAVE_CHANGES_URL,
@@ -122,6 +123,16 @@ export const saveAllChanges = async (payload, accessToken) => {
 	const res = await makeHttpReq(
 		SAVE_CHANGES_URL,
 		makeHttpOptions('PUT', payload, accessToken),
+	);
+	return res;
+};
+
+// task services
+
+export const addTask = async (task, accessToken) => {
+	const res = await makeHttpReq(
+		ADD_NEW_TASK_URL,
+		makeHttpOptions('POST', task, accessToken),
 	);
 	return res;
 };

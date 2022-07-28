@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
 	getBoardInfo,
@@ -7,6 +13,7 @@ import {
 	getUser,
 	addBoard,
 	saveAllChanges,
+	addTask,
 } from '../api/helper';
 import { isStrFalsy } from '../util';
 import { removeKey, setValue, useInstantUpdate } from './../user-boards/helper';
@@ -21,6 +28,7 @@ export const BoardDataContextProvider = ({ children }) => {
 	const navigate = useNavigate();
 	const { performInstantUpdate } = useInstantUpdate(setBoardData);
 
+	// Board Methods
 	const getBoardInformation = useCallback(async () => {
 		setBoardDataLoading(true);
 		const res = await getBoardInfo(getUser());
@@ -82,6 +90,52 @@ export const BoardDataContextProvider = ({ children }) => {
 		if (isResOk(res)) setSaveState('disabled');
 	};
 
+	// task methods
+
+	const addNewTask = async (task, boardPosition) => {
+		const newTask = {
+			task_item: task,
+			board_id: boardData[boardPosition]._id,
+		};
+		const res = await addTask(newTask, getUser());
+		if (isResOk(res)) {
+			setBoardData((boards) => ({
+				...boards,
+				[boardPosition]: {
+					...boards[boardPosition],
+					tasks: [...boards[boardPosition]?.tasks, res?.payload],
+				},
+			}));
+		}
+	};
+
+	const deleteTask = (task, boardPosition) => {
+		setBoardData((b) => ({
+			...b,
+			[boardPosition]: {
+				...b[boardPosition],
+				tasks: b[boardPosition].tasks.filter((t) => t._id !== task._id),
+			},
+		}));
+		setSaveState('enabled');
+	};
+
+	useEffect(() => {
+		const beforeUnloadListener = (event) => {
+			event.preventDefault();
+			return (event.returnValue = 'Are you sure you want to exit?');
+		};
+		if (saveState === 'enabled') {
+			window.addEventListener('beforeunload', beforeUnloadListener, {
+				capture: true,
+			});
+		}
+		return () =>
+			window.removeEventListener('beforeunload', beforeUnloadListener, {
+				capture: true,
+			});
+	}, [saveState]);
+
 	return (
 		<BoardDataContext.Provider
 			value={{
@@ -96,6 +150,8 @@ export const BoardDataContextProvider = ({ children }) => {
 				deletedStack,
 				setDeletedStack,
 				saveChanges,
+				addNewTask,
+				deleteTask,
 			}}
 		>
 			{children}

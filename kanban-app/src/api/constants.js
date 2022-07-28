@@ -11,3 +11,5 @@ export const UPDATE_BOARD_URL = `${BASE_URL}/board/update`;
 export const ADD_BOARD_URL = `${BASE_URL}/board/create`;
 
 export const SAVE_CHANGES_URL = `${BASE_URL}/shared/bulk-update-tasks`;
+
+export const ADD_NEW_TASK_URL = `${BASE_URL}/task/create`;
