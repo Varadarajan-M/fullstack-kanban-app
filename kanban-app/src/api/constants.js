@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:3000/api';
+export const BASE_URL = 'https://kanban-app-v1.herokuapp.com/api';
 
 export const LOGIN_URL = `${BASE_URL}/login`;
 

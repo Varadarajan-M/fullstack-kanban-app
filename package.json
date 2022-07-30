@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "server.js",
 	"scripts": {
-		"dev": "nodemon server.js"
+		"start": "node kanban-server/server.js",
+		"dev": "nodemon kanban-server/server.js"
 	},
 	"author": "",
 	"license": "ISC",
