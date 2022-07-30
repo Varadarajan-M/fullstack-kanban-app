@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { isStrNotFalsy } from '../util';
 
-const AuthForm = ({ mode, onSubmit }) => {
+const AuthForm = ({ mode, onSubmit, isProcessingReq }) => {
 	const usernameRef = useRef(null);
 	const emailRef = useRef(null);
 	const passwordRef = useRef(null);
@@ -45,27 +45,14 @@ const AuthForm = ({ mode, onSubmit }) => {
 			)}
 			<div className='email'>
 				<label htmlFor='email'>Email Address</label>
-				<input
-					id='email'
-					type='email'
-					ref={emailRef}
-					placeholder='Johndoe@example.com'
-					required
-				/>
+				<input id='email' type='email' ref={emailRef} placeholder='Johndoe@example.com' required />
 			</div>
 			<div className='password'>
 				<label htmlFor='password'>Password</label>
-				<input
-					id='password'
-					type='password'
-					ref={passwordRef}
-					placeholder='Password'
-					required
-					autoComplete='off'
-				/>
+				<input id='password' type='password' ref={passwordRef} placeholder='Password' required autoComplete='off' />
 			</div>
-			<button type='submit'>
-				{mode === 'login' ? 'Sign in' : 'Sign up'}
+			<button disabled={isProcessingReq} type='submit'>
+				{isLogin ? (isProcessingReq ? 'Signing in...' : 'Sign in') : isProcessingReq ? 'Signing up...' : 'Sign up'}
 			</button>
 		</form>
 	);

@@ -1,22 +1,10 @@
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-	getBoardInfo,
-	isResOk,
-	updateBoard,
-	getUser,
-	addBoard,
-	saveAllChanges,
-	addTask,
-} from '../api/helper';
+import { getBoardInfo, isResOk, updateBoard, getUser, addBoard, saveAllChanges, addTask } from '../api/helper';
+
 import { isStrFalsy } from '../util';
 import { removeKey, setValue, useInstantUpdate } from './../user-boards/helper';
+import { useAuth } from './AuthContext';
 
 const BoardDataContext = createContext({});
 
@@ -28,6 +16,8 @@ export const BoardDataContextProvider = ({ children }) => {
 	const navigate = useNavigate();
 	const { performInstantUpdate } = useInstantUpdate(setBoardData);
 
+	const { clearAuthState } = useAuth();
+
 	// Board Methods
 	const getBoardInformation = useCallback(async () => {
 		setBoardDataLoading(true);
@@ -36,6 +26,7 @@ export const BoardDataContextProvider = ({ children }) => {
 			setBoardData(res.payload);
 			setBoardDataLoading(false);
 		} else {
+			clearAuthState();
 			navigate('/login', { replace: true });
 		}
 	}, []);
@@ -78,10 +69,7 @@ export const BoardDataContextProvider = ({ children }) => {
 		const payload = { tasks: [], deletedStack };
 		setSaveState('saving');
 		Object.entries(boardData).forEach(([key, board]) => {
-			const tasks = board.tasks.reduce(
-				(ac, task, index) => [...ac, { ...task, task_position: index }],
-				[],
-			);
+			const tasks = board.tasks.reduce((ac, task, index) => [...ac, { ...task, task_position: index }], []);
 			payload.tasks.push(tasks);
 		});
 		payload.tasks = payload.tasks.flat();
@@ -127,9 +115,18 @@ export const BoardDataContextProvider = ({ children }) => {
 			...board,
 			[boardPosition]: {
 				...board[boardPosition],
-				tasks: board[boardPosition].tasks.map((t) =>
-					t._id === taskId ? { ...t, task_item: value } : t,
-				),
+				tasks: board[boardPosition].tasks.map((t) => (t._id === taskId ? { ...t, task_item: value } : t)),
+			},
+		}));
+		setSaveState('enabled');
+	};
+
+	const updateListOrder = (key, taskArray) => {
+		setBoardData((b) => ({
+			...b,
+			[key]: {
+				...b[key],
+				tasks: taskArray,
 			},
 		}));
 		setSaveState('enabled');
@@ -173,6 +170,7 @@ export const BoardDataContextProvider = ({ children }) => {
 				addNewTask,
 				deleteTask,
 				editTask,
+				updateListOrder,
 			}}
 		>
 			{children}

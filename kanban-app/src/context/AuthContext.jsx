@@ -21,15 +21,12 @@ const AuthContext = createContext(initAuthState);
 const AuthContextProvider = ({ children }) => {
 	const [authState, setAuthState] = useState(getInitialAuthState);
 
-	const clearAuthState = () => setAuthState(initAuthState);
+	const clearAuthState = () => {
+		setAuthState(initAuthState);
+		localStorage.clear();
+	};
 
-	return (
-		<AuthContext.Provider
-			value={{ authState, setAuthState, clearAuthState }}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+	return <AuthContext.Provider value={{ authState, setAuthState, clearAuthState }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

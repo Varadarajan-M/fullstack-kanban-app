@@ -37,11 +37,7 @@ export const makeHttpReq = async (url, options = {}) => {
 	}
 };
 
-export const makeHttpOptions = (
-	method = 'GET',
-	body = {},
-	authToken = null,
-) => {
+export const makeHttpOptions = (method = 'GET', body = {}, authToken = null) => {
 	const options = {
 		method,
 		headers: {
@@ -58,10 +54,7 @@ export const isResOk = (res) => res?.ok;
 // *Login service
 
 export const login = async (userCreds, setAuthState) => {
-	const res = await makeHttpReq(
-		LOGIN_URL,
-		makeHttpOptions('POST', userCreds),
-	);
+	const res = await makeHttpReq(LOGIN_URL, makeHttpOptions('POST', userCreds));
 	if (isResOk(res)) {
 		setAuthState({
 			isAuthenticated: true,
@@ -78,20 +71,14 @@ export const login = async (userCreds, setAuthState) => {
 };
 // *Signup service
 export const signup = async (userCreds) => {
-	const res = await makeHttpReq(
-		SIGN_UP_URL,
-		makeHttpOptions('POST', userCreds),
-	);
+	const res = await makeHttpReq(SIGN_UP_URL, makeHttpOptions('POST', userCreds));
 	return res;
 };
 
 // Get user board information
 
 export const getBoardInfo = async (accessToken) => {
-	const res = await makeHttpReq(
-		BOARD_INFO_URL,
-		makeHttpOptions('GET', {}, accessToken),
-	);
+	const res = await makeHttpReq(BOARD_INFO_URL, makeHttpOptions('GET', {}, accessToken));
 	return res;
 };
 
@@ -112,27 +99,18 @@ export const updateBoard = async (id, value, accessToken) => {
 };
 
 export const addBoard = async (boardDetails, accessToken) => {
-	const res = await makeHttpReq(
-		ADD_BOARD_URL,
-		makeHttpOptions('POST', boardDetails, accessToken),
-	);
+	const res = await makeHttpReq(ADD_BOARD_URL, makeHttpOptions('POST', boardDetails, accessToken));
 	return res;
 };
 
 export const saveAllChanges = async (payload, accessToken) => {
-	const res = await makeHttpReq(
-		SAVE_CHANGES_URL,
-		makeHttpOptions('PUT', payload, accessToken),
-	);
+	const res = await makeHttpReq(SAVE_CHANGES_URL, makeHttpOptions('PUT', payload, accessToken));
 	return res;
 };
 
 // task services
 
 export const addTask = async (task, accessToken) => {
-	const res = await makeHttpReq(
-		ADD_NEW_TASK_URL,
-		makeHttpOptions('POST', task, accessToken),
-	);
+	const res = await makeHttpReq(ADD_NEW_TASK_URL, makeHttpOptions('POST', task, accessToken));
 	return res;
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export const removeKey = (obj, key) => {
 	const clone = structuredClone(obj);
@@ -25,6 +25,18 @@ export const toggleElementFromSet = (set, el, setterFn) => {
 	const modifiedSet = new Set(set);
 	modifiedSet.has(el) ? modifiedSet.delete(el) : modifiedSet.add(el);
 	setterFn(modifiedSet);
+};
+
+export const reorderList = (list, destIndex, item) => {
+	list.splice(list.indexOf(item), 1);
+	list.splice(destIndex, 0, item);
+	return list;
+};
+
+export const removeAndAddToList = (sourceList, destList, destIndex, item) => {
+	sourceList.splice(sourceList.indexOf(item), 1);
+	destList.splice(destIndex, 0, item);
+	return { sourceList, destList };
 };
 
 export const useInstantUpdate = (setterFn) => {

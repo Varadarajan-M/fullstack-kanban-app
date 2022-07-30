@@ -2,7 +2,7 @@ import { Navigate, Routes, Route } from 'react-router-dom';
 import './App.scss';
 import ProtectedRoutes from './common/ProtectedRoute';
 import Auth from './pages/Auth';
-import UserData from './user-boards/UserData';
+import UserData from './pages/UserData';
 
 function App() {
 	return (
@@ -12,10 +12,7 @@ function App() {
 				<Route path='/home' element={<ProtectedRoutes />}>
 					<Route index element={<UserData />} />
 				</Route>
-				<Route
-					path='*'
-					element={<Navigate to={'/*'} replace={true} />}
-				/>
+				<Route path='*' element={<Navigate to={'/*'} replace={true} />} />
 			</Routes>
 		</div>
 	);

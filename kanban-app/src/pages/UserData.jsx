@@ -1,6 +1,6 @@
 import React from 'react';
-import Navbar from './Navbar';
-import Boards from './Boards';
+import Navbar from '../user-boards/Navbar';
+import Boards from '../user-boards/Boards';
 import { BoardDataContextProvider } from '../context/BoardDataContext';
 
 const UserData = () => {

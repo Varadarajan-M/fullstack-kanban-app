@@ -8,9 +8,10 @@ const TaskCard = ({
 	isEditing,
 	changeHandler,
 	onEditSubmit,
+	style,
 }) => {
 	return (
-		<div className='task-card'>
+		<div className='task-card' style={{ ...style }}>
 			{isEditing ? (
 				<div className='edit__task'>
 					<input onChange={changeHandler} defaultValue={taskItem} />
