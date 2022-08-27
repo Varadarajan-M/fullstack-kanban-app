@@ -5,6 +5,8 @@ const ERROR_RESPONSE = {
 	ok: false,
 };
 
+// #TODO: Remove this after changing board and task schema - as doing the same in Project.getOne
+
 const getBoardData = async function (id) {
 	let boardData = {};
 	try {
@@ -16,10 +18,7 @@ const getBoardData = async function (id) {
 		if (boards?.length > 0) {
 			boards.forEach((board) => {
 				const boardTasks = sortBy(
-					tasks?.filter(
-						(task) =>
-							task.board_id.toString() === board._id.toString(),
-					),
+					tasks?.filter((task) => task.board_id.toString() === board._id.toString()),
 					'task_position',
 				);
 
@@ -36,25 +35,18 @@ const getBoardData = async function (id) {
 	}
 };
 
-const isBoardOwner = async (userId, boardId) =>
-	!isFalsy(await Board.exists({ _id: boardId, user_id: userId }));
+const isBoardOwner = async (userId, boardId) => !isFalsy(await Board.exists({ _id: boardId, user_id: userId }));
 
 const bulkUpdateTasks = async (updatedTasks, deletedStack, userID) => {
 	try {
 		await Promise.all(
 			updatedTasks?.map(async (task) => {
 				if (await isBoardOwner(userID, task?.board_id)) {
-					return Task.updateOne(
-						{ _id: task._id, user_id: userID },
-						task,
-					);
+					return Task.updateOne({ _id: task._id, user_id: userID }, task);
 				}
 			}),
 		);
-		if (
-			deletedStack.hasOwnProperty('boards') &&
-			deletedStack?.boards.length > 0
-		) {
+		if (deletedStack.hasOwnProperty('boards') && deletedStack?.boards.length > 0) {
 			await Promise.all(
 				deletedStack.boards.map(async (board, i) => {
 					i === 0 && (await Task.deleteMany({ board_id: board._id }));
@@ -62,10 +54,7 @@ const bulkUpdateTasks = async (updatedTasks, deletedStack, userID) => {
 				}),
 			);
 		}
-		if (
-			deletedStack.hasOwnProperty('tasks') &&
-			deletedStack?.tasks.length > 0
-		) {
+		if (deletedStack.hasOwnProperty('tasks') && deletedStack?.tasks.length > 0) {
 			await Promise.all(
 				deletedStack?.tasks?.map((task) => {
 					return Task.deleteOne({ _id: task._id, user_id: userID });

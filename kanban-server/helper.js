@@ -40,6 +40,8 @@ const sortBy = (arr, field) => {
 	return arr;
 };
 
+const isProduction = () => process.env.NODE_ENV === 'production';
+
 module.exports = {
 	sendSuccessPayload,
 	sendError,
@@ -51,4 +53,5 @@ module.exports = {
 	isFalsy,
 	isEmpty,
 	sortBy,
+	isProduction,
 };

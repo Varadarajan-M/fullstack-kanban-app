@@ -2,6 +2,7 @@ const express = require('express');
 const userroute = require('./routes/user.route');
 const taskroute = require('./routes/task.route');
 const boardroute = require('./routes/board.route');
+const projectRoute = require('./routes/project.route');
 const sharedRoute = require('./routes/shared.route');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -18,6 +19,7 @@ const registerApp = async () => {
 	app.use(express.json());
 
 	registerRoute(userroute);
+	registerRoute(projectRoute);
 	registerRoute(boardroute);
 	registerRoute(taskroute);
 	registerRoute(sharedRoute);

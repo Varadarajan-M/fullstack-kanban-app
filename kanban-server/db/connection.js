@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { isProduction } = require('../helper');
 
 const connectionOptions = {
 	useNewUrlParser: true,
@@ -6,7 +7,8 @@ const connectionOptions = {
 };
 
 const connectDb = async function () {
-	mongoose.connect(process.env.MONGO_URI, connectionOptions, (err) => {
+	const MONGO_URI = isProduction() ? process.env.MONGO_URI : process.env.MONGO_URI_DEV;
+	mongoose.connect(MONGO_URI, connectionOptions, (err) => {
 		if (err) {
 			console.log('Something went wrong', err);
 		}
