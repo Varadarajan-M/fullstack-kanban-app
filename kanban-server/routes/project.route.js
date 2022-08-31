@@ -8,10 +8,11 @@ router.use('/project', router);
 
 router.get('/get', verifyAuth, ProjectController.get);
 
-// *Not available currently*
-// router.get('/getOne/:id', verifyAuth, ProjectController.getOne);
+router.get('/get-one/:id', verifyAuth, ProjectController.getOne);
 
 router.post('/create', verifyAuth, ProjectController.create);
+
+router.post('/save-changes/:id', verifyAuth, ProjectController.saveChanges);
 
 router.patch('/update/:id', verifyAuth, ProjectController.update);
 

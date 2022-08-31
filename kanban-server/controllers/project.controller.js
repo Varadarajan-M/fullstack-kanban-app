@@ -50,3 +50,17 @@ exports.delete = async (req, res) => {
 		sendError(res, CANNOT_DELETE_PROJECT_ERR);
 	}
 };
+
+exports.saveChanges = async (req, res) => {
+	const updatedData = await ProjectService.saveChanges(
+		req?.body?.tasks,
+		req?.body?.deletedStack ?? {},
+		req?.user?.userID,
+		req?.params?.id ?? -1,
+	);
+	if (updatedData.ok) {
+		sendSuccessPayload(res, updatedData.message, 200);
+	} else {
+		sendError(res, throwError('Something went wrong', 400));
+	}
+};

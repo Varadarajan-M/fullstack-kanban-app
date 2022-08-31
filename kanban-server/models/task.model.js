@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Board = require('./board.model');
 
 const TaskSchema = new mongoose.Schema(
 	{
@@ -19,6 +18,10 @@ const TaskSchema = new mongoose.Schema(
 			type: mongoose.Types.ObjectId,
 			required: true,
 			ref: 'User',
+		},
+		project_id: {
+			type: mongoose.Types.ObjectId,
+			ref: 'Project',
 		},
 	},
 	{ timestamps: true },

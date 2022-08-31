@@ -15,6 +15,10 @@ const BoardSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
+		project_id: {
+			type: mongoose.Types.ObjectId,
+			ref: 'Project',
+		},
 	},
 	{ timestamps: true },
 );

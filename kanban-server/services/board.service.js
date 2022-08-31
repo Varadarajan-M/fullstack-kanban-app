@@ -1,12 +1,18 @@
 const Board = require('../models/board.model');
+const ProjectService = require('./project.service');
 const ERROR_RESPONSE = {
 	ok: false,
 };
-exports.create = async function ({ board_name }, userID) {
+
+exports.create = async function ({ board_name, project_id }, userID) {
+	const projectOwner = await ProjectService.isProjectOwnerService(project_id, userID);
+	if (!projectOwner) return ERROR_RESPONSE;
+
 	try {
-		const boardCount = await Board.find({ user_id: userID }).count();
+		const boardCount = await Board.find({ user_id: userID, project_id }).count();
 		const newBoard = await Board.create({
 			board_name,
+			project_id,
 			board_position: boardCount > 0 ? boardCount + 1 : 1,
 			user_id: userID,
 		});
@@ -20,12 +26,9 @@ exports.create = async function ({ board_name }, userID) {
 	}
 };
 
-exports.update = async function (id, board_data, userID) {
+exports.update = async function (id, { board_name }, userID) {
 	try {
-		const updatedData = await Board.updateOne(
-			{ _id: id, user_id: userID },
-			{ ...board_data, user_id: userID },
-		);
+		const updatedData = await Board.updateOne({ _id: id, user_id: userID }, { board_name, user_id: userID });
 		if (updatedData.modifiedCount > 0) {
 			return { ok: true, message: 'Updated successfully' };
 		}
