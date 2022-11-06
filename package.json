@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "node kanban-server/server.js",
 		"dev": "nodemon kanban-server/server.js",
-		"heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --legacy-peer-deps --prefix kanban-app && npm run build --prefix kanban-app"
+		"build": "NPM_CONFIG_PRODUCTION=false npm install --legacy-peer-deps --prefix kanban-app && npm run build --prefix kanban-app"
 	},
 	"author": "",
 	"license": "ISC",
